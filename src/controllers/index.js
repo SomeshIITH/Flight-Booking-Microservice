@@ -1,5 +1,5 @@
 //start
 
 module.exports = {
-    UserController : require('./user-controller.js')
+    BookingController : require('./booking-controller')
 }
