@@ -7,6 +7,7 @@ module.exports = {
     SALT : bcrypt.genSaltSync(10),
     JWT_KEY : process.env.JWT_KEY,
     FLIGHT_SERVICE_PATH : process.env.FLIGHT_SERVICE_PATH,
+    PAYMENT_SERVICE_PATH : preocess.env.PAYMENT_SERVICE_PATH,
     
     MESSAGE_BROKER_URL : process.env.MESSAGE_BROKER_URL,
     EXCHANGE_NAME : process.env.EXCHANGE_NAME,

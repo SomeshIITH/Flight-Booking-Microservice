@@ -25,13 +25,13 @@ module.exports = (sequelize, DataTypes) => {
     status: {
       type : DataTypes.ENUM,
       allowNull : false,
-      values : ["INPROCESS","BOOKED","CANCEL"],
+      values : ["INPROCESS","BOOKED","CANCEL","PENDING"],
       defaultValue : "INPROCESS"
     },
     noOfSeats: {
       type : DataTypes.INTEGER,
       allowNull : false,
-      defaultValue : 50
+      defaultValue : 1
     },
     totalCost: {
       type : DataTypes.INTEGER,
@@ -41,6 +41,11 @@ module.exports = (sequelize, DataTypes) => {
     departureTime : {
       type : DataTypes.DATE,
       allowNull : false
+    },
+    // Crucial for Payment Service integration
+    transactionId: {
+      type: DataTypes.STRING,
+      allowNull: true, // Remains null until payment is initiated
     }
   }, {
     sequelize,
