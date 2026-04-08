@@ -20,8 +20,8 @@ module.exports = {
       status: {
         type: Sequelize.ENUM,
         allowNull : false,
-        values : ["InProcess","Booked","Cancelled"],
-        defaultValue : "InProcess"
+        values : ["INPROCESS","BOOKED","CANCEL"],
+        defaultValue : "INPROCESS"
       },
       noOfSeats: {
         type: Sequelize.INTEGER,
@@ -32,6 +32,10 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull : false,
         defaultValue : 1000
+      },
+      departureTime : {
+        type : Sequelize.DATE,
+        allowNull : false
       },
       createdAt: {
         allowNull: false,

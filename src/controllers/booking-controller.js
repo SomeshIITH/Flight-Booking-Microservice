@@ -10,7 +10,7 @@ class BookingController{
     async sendMessageToQueue(req,res){
         try{
             const channel = await createChannel();
-            const jsonmessage = JSON.stringify({message : "Success full"});
+            const jsonmessage = JSON.stringify({message : "Success full" , service : "DUMMY"});
             // console.log("channel created");
             publishMessage(channel,REMINDER_BINDING_KEY,jsonmessage);
             // console.log("message sent to queue");
