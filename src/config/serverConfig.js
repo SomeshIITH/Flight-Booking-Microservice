@@ -9,8 +9,11 @@ module.exports = {
     FLIGHT_SERVICE_PATH : process.env.FLIGHT_SERVICE_PATH,
     PAYMENT_SERVICE_PATH : preocess.env.PAYMENT_SERVICE_PATH,
     
+    //used in utility
     MESSAGE_BROKER_URL : process.env.MESSAGE_BROKER_URL,
     EXCHANGE_NAME : process.env.EXCHANGE_NAME,
+    QUEUE_NAME : process.env.QUEUE_NAME,
+    //used in booking service to create ticket
     REMINDER_BINDING_KEY : process.env.REMINDER_BINDING_KEY,
-    QUEUE_NAME : process.env.QUEUE_NAME
+    RECIPIENT_EMAIL : process.env.RECIPIENT_EMAIL
 }
