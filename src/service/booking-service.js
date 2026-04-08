@@ -5,6 +5,9 @@ const {PAYMENT_SERVICE_PATH} = require('./../config/serverConfig.js');
 const db = require('./../models/index.js');
 const {StatusCodes} = require('http-status-codes');
 const AppError = require('./../utils/app-error.js');
+const {createChannel,publishMessage} = require('./../utils/message-queue.js');
+const {REMINDER_BINDING_KEY,RECIPIENT_EMAIL} = require('./../config/serverConfig.js');
+
 
 
 class BookingService{
@@ -48,7 +51,22 @@ class BookingService{
                     throw new Error("Payment declined by gateway");
                 }
                 //  5. SUCCESS: Move to BOOKED and store the transactionId
-                return await this.bookingRepository.updateBooking(booking.id,{status : "BOOKED",transactionId : paymentResponse.data.data.transactionId});
+                const finalBooking = await this.bookingRepository.updateBooking(booking.id,{status : "BOOKED",transactionId : paymentResponse.data.data.transactionId});
+
+                //6 . BOOKING CREATED SUCCESSFULLY THEN SEND IT TO QUEUE
+                const channel = await createChannel();
+                const payload = JSON.stringify({
+                    data : {
+                        subject : "Booking Confirmed",
+                        content: `Your booking for flight ${finalBooking.flightId} is successful!`,
+                        recipientEmail : RECIPIENT_EMAIL,
+                        notificationTime : finalBooking.departureTime
+                    },
+                    service: "CREATE_TICKET"  // Helps the Reminder service identify the task
+                })
+                await publishMessage(channel,REMINDER_BINDING_KEY,payload);
+                return finalBooking;
+
             }catch(paymentErorr){
                 // 6. FAILURE: Trigger Compensating Transaction (Release Seats)
                 await this.cancelBooking(booking.id);
