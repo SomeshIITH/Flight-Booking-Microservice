@@ -1,12 +1,11 @@
 const {BookingRepository} = require('./../repository/index.js');
 const axios = require('axios');
-const {FLIGHT_SERVICE_PATH} = require('./../config/serverConfig.js');
-const {PAYMENT_SERVICE_PATH} = require('./../config/serverConfig.js');
+const {FLIGHT_SERVICE_PATH,PAYMENT_SERVICE_PATH,USER_SERVICE_PATH} = require('./../config/serverConfig.js');
 const db = require('./../models/index.js');
 const {StatusCodes} = require('http-status-codes');
 const AppError = require('./../utils/app-error.js');
 const {createChannel,publishMessage} = require('./../utils/message-queue.js');
-const {REMINDER_BINDING_KEY,RECIPIENT_EMAIL} = require('./../config/serverConfig.js');
+const {REMINDER_BINDING_KEY} = require('./../config/serverConfig.js');
 
 
 
@@ -52,6 +51,9 @@ class BookingService{
                 }
                 //  5. SUCCESS: Move to BOOKED and store the transactionId
                 const finalBooking = await this.bookingRepository.updateBooking(booking.id,{status : "BOOKED",transactionId : paymentResponse.data.data.transactionId});
+                const getUserUrl = `${USER_SERVICE_PATH}/api/v1/users/${data.userId}`;
+                const userResponse = await axios.get(getUserUrl);
+                const userData = userResponse.data.data;
 
                 //6 . BOOKING CREATED SUCCESSFULLY THEN SEND IT TO QUEUE
                 const channel = await createChannel();
@@ -59,7 +61,7 @@ class BookingService{
                     data : {
                         subject : "Booking Confirmed",
                         content: `Your booking for flight ${finalBooking.flightId} is successful!`,
-                        recipientEmail : RECIPIENT_EMAIL,
+                        recipientEmail : userData.email,
                         notificationTime : finalBooking.departureTime
                     },
                     service: "CREATE_TICKET"  // Helps the Reminder service identify the task
